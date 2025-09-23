@@ -3,17 +3,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Eye, EyeOff, Lock, Mail, User } from "lucide-react";
+import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useDispatch } from "react-redux";
+import { register } from "@/store/authSlice";
 
 interface RegisterFormProps {
-  onRegister: (email: string) => void;
   onToggleMode: () => void;
 }
 
-export function RegisterForm({ onRegister, onToggleMode }: RegisterFormProps) {
+export function RegisterForm({ onToggleMode }: RegisterFormProps) {
   const [formData, setFormData] = useState({
-    name: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -21,11 +21,12 @@ export function RegisterForm({ onRegister, onToggleMode }: RegisterFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const dispatch = useDispatch();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
+    if (!formData.email || !formData.password || !formData.confirmPassword) {
       toast({
         title: "Error",
         description: "Please fill in all fields",
@@ -53,15 +54,29 @@ export function RegisterForm({ onRegister, onToggleMode }: RegisterFormProps) {
     }
 
     setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      // Backend registration only requires email and password
+      await dispatch(register({
+        email: formData.email,
+        password: formData.password
+      }) as any).unwrap();
+      
       toast({
         title: "Account created!",
-        description: "Welcome to Forge API Platform",
+        description: "Welcome to Forge API Platform. Please login with your credentials.",
       });
-      onRegister(formData.email);
-    }, 1500);
+      
+      // Switch to login mode after successful registration
+      onToggleMode();
+    } catch (error: any) {
+      toast({
+        title: "Registration Error",
+        description: error.message || "Failed to create account. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleInputChange = (field: string, value: string) => {
@@ -78,22 +93,6 @@ export function RegisterForm({ onRegister, onToggleMode }: RegisterFormProps) {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">Full Name</Label>
-            <div className="relative">
-              <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                id="name"
-                type="text"
-                placeholder="John Doe"
-                className="pl-10"
-                value={formData.name}
-                onChange={(e) => handleInputChange("name", e.target.value)}
-                disabled={isLoading}
-              />
-            </div>
-          </div>
-          
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <div className="relative">

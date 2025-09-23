@@ -1,12 +1,16 @@
 import { Activity, Key, Code, TrendingUp } from "lucide-react";
 import { StatsCard } from "@/components/dashboard/StatsCard";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
-interface DashboardProps {
-  userName: string;
-}
+export default function Dashboard() {
+  const { user } = useSelector((state: RootState) => state.auth);
+  
+  if (!user) {
+    return null;
+  }
 
-export default function Dashboard({ userName }: DashboardProps) {
-  const firstName = userName.split(' ')[0] || userName.split('@')[0];
+  const firstName = user.name.split(' ')[0] || user.name.split('@')[0];
 
   return (
     <div className="p-6 space-y-6">

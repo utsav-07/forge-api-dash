@@ -2,11 +2,7 @@ import { useState } from "react";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { RegisterForm } from "@/components/auth/RegisterForm";
 
-interface AuthPageProps {
-  onAuthenticated: (email: string) => void;
-}
-
-export default function AuthPage({ onAuthenticated }: AuthPageProps) {
+export default function AuthPage() {
   const [isLoginMode, setIsLoginMode] = useState(true);
 
   return (
@@ -27,12 +23,10 @@ export default function AuthPage({ onAuthenticated }: AuthPageProps) {
         <div className="animate-fade-in">
           {isLoginMode ? (
             <LoginForm
-              onLogin={onAuthenticated}
               onToggleMode={() => setIsLoginMode(false)}
             />
           ) : (
             <RegisterForm
-              onRegister={onAuthenticated}
               onToggleMode={() => setIsLoginMode(true)}
             />
           )}

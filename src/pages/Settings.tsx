@@ -8,16 +8,19 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { User, Bell, Shield, CreditCard, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
-interface SettingsProps {
-  userName: string;
-  userEmail: string;
-}
+export default function Settings() {
+  const { user } = useSelector((state: RootState) => state.auth);
+  
+  if (!user) {
+    return null;
+  }
 
-export default function Settings({ userName, userEmail }: SettingsProps) {
   const [profile, setProfile] = useState({
-    name: userName,
-    email: userEmail,
+    name: user.name,
+    email: user.email,
     company: "Tech Startup Inc.",
   });
   
