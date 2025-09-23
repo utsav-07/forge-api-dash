@@ -5,18 +5,20 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useDispatch } from "react-redux";
+import { login } from "@/store/authSlice";
 
 interface LoginFormProps {
-  onLogin: (email: string) => void;
   onToggleMode: () => void;
 }
 
-export function LoginForm({ onLogin, onToggleMode }: LoginFormProps) {
+export function LoginForm({ onToggleMode }: LoginFormProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const dispatch = useDispatch();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,15 +32,23 @@ export function LoginForm({ onLogin, onToggleMode }: LoginFormProps) {
     }
 
     setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      // Dispatch the login thunk
+      await dispatch(login({ email, password }) as any).unwrap();
+      
       toast({
         title: "Welcome back!",
         description: "Successfully logged in to your dashboard",
       });
-      onLogin(email);
-    }, 1500);
+    } catch (error: any) {
+      toast({
+        title: "Login Error",
+        description: error.message || "Failed to login. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
