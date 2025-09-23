@@ -20,7 +20,7 @@ const handleAPIError = async (response: Response) => {
 export const authAPI = {
   register: async (userData: { email: string; password: string }) => {
     try {
-      const response = await fetch('/register', {
+      const response = await fetch('http://localhost:8000/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -41,7 +41,7 @@ export const authAPI = {
   
   login: async (credentials: { email: string; password: string }) => {
     try {
-      const response = await fetch('/login', {
+      const response = await fetch('http://localhost:8000/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -63,8 +63,8 @@ export const authAPI = {
   generateAPIKey: async (token: string, name?: string) => {
     try {
       const url = name 
-        ? `/generate-key?name=${encodeURIComponent(name)}`
-        : `/generate-key`;
+        ? `http://localhost:8000/generate-key?name=${encodeURIComponent(name)}`
+        : `http://localhost:8000/generate-key`;
         
       const response = await fetch(url, {
         method: 'POST',
@@ -87,7 +87,7 @@ export const authAPI = {
   
   getAPIKeys: async (token: string) => {
     try {
-      const response = await fetch('/api-keys', {
+      const response = await fetch('http://localhost:8000/api-keys', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -108,7 +108,7 @@ export const authAPI = {
   
   deleteAPIKey: async (token: string, keyId: string) => {
     try {
-      const response = await fetch(`/api-keys/${keyId}`, {
+      const response = await fetch(`http://localhost:8000/api-keys/${keyId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -127,14 +127,15 @@ export const authAPI = {
     }
   },
   
-  regenerateAPIKey: async (token: string, keyId: string) => {
+  setAPIKeyActive: async (token: string, keyId: string, active: boolean) => {
     try {
-      const response = await fetch(`/api-keys/${keyId}/regenerate`, {
+      const response = await fetch(`http://localhost:8000/api-keys/${keyId}/active`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
+        body: JSON.stringify({ active }),
       });
       
       if (!response.ok) {

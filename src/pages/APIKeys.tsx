@@ -73,7 +73,7 @@ export default function APIKeys() {
     setIsRefreshing(true);
     try {
       // Call the backend API to get the list of API keys
-      const response = await callApi<{ api_keys: BackendAPIKey[] }>('/api-keys', {
+      const response = await callApi<{ success: boolean; message: string; data: { api_keys: BackendAPIKey[] } }>('/api-keys', {
         requiresAuth: true,
         method: 'GET'
       });
@@ -168,28 +168,24 @@ export default function APIKeys() {
     }
   };
 
-  const handleRegenerateKey = async (id: string) => {
+  const handleSetActive = async (id: string, active: boolean) => {
     try {
-      // Find the key name before regenerating
       const keyName = apiKeys.find(key => key.id === id)?.name || "API Key";
-      
-      // Call the backend API to regenerate the key
-      await callApi(`/api-keys/${id}/regenerate`, {
+      await callApi(`/api-keys/${id}/active`, {
         method: 'POST',
         requiresAuth: true,
+        body: JSON.stringify({ active }),
+        headers: { 'Content-Type': 'application/json' }
       });
-      
-      // Refresh the list after regeneration
       await loadAPIKeys();
-      
       toast({
-        title: "API Key Regenerated",
-        description: `New key generated for "${keyName}"`,
+        title: active ? "API Key Activated" : "API Key Deactivated",
+        description: `${keyName} is now ${active ? 'active' : 'inactive'}`,
       });
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.message || "Failed to regenerate API key",
+        description: error.message || "Failed to update API key status",
         variant: "destructive",
       });
     }
@@ -298,7 +294,7 @@ export default function APIKeys() {
                 key={apiKey.id}
                 apiKey={apiKey}
                 onDelete={handleDeleteKey}
-                onRegenerate={handleRegenerateKey}
+                onSetActive={handleSetActive}
               />
             ))}
           </TableBody>

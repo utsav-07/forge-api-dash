@@ -8,7 +8,7 @@ import {
   DropdownMenuItem, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
-import { Copy, Eye, EyeOff, MoreHorizontal, Trash2, RotateCcw } from "lucide-react";
+import { Copy, Eye, EyeOff, MoreHorizontal, Trash2, ToggleLeft, ToggleRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
@@ -25,10 +25,10 @@ interface APIKey {
 interface APIKeyRowProps {
   apiKey: APIKey;
   onDelete: (id: string) => void;
-  onRegenerate: (id: string) => void;
+  onSetActive: (id: string, active: boolean) => void;
 }
 
-export function APIKeyRow({ apiKey, onDelete, onRegenerate }: APIKeyRowProps) {
+export function APIKeyRow({ apiKey, onDelete, onSetActive }: APIKeyRowProps) {
   const [showKey, setShowKey] = useState(false);
   const { toast } = useToast();
 
@@ -102,11 +102,18 @@ export function APIKeyRow({ apiKey, onDelete, onRegenerate }: APIKeyRowProps) {
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuItem onClick={() => onRegenerate(apiKey.id)}>
-              <RotateCcw className="h-4 w-4 mr-2" />
-              Regenerate Key
-            </DropdownMenuItem>
+          <DropdownMenuContent align="end" className="w-56">
+            {apiKey.status === "active" ? (
+              <DropdownMenuItem onClick={() => onSetActive(apiKey.id, false)}>
+                <ToggleLeft className="h-4 w-4 mr-2" />
+                Deactivate Key
+              </DropdownMenuItem>
+            ) : (
+              <DropdownMenuItem onClick={() => onSetActive(apiKey.id, true)}>
+                <ToggleRight className="h-4 w-4 mr-2" />
+                Activate Key
+              </DropdownMenuItem>
+            )}
             <DropdownMenuItem 
               onClick={() => onDelete(apiKey.id)}
               className="text-destructive focus:text-destructive"

@@ -1,8 +1,14 @@
 import { APIServiceCard } from "@/components/dashboard/APIServiceCard";
+import { APITestDialog } from "@/components/dashboard/APITestDialog";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 export default function APIServices() {
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [mode, setMode] = useState<"search" | "text" | "file">("search");
 
   const handleTryNow = (service: string) => {
     toast({
@@ -20,7 +26,8 @@ export default function APIServices() {
       endpoint: "https://api.forge.dev/v1/text/embed",
       buttonText: "Try Now",
       usageCount: "15.2K",
-      buttonAction: () => handleTryNow("Text Embedding"),
+      buttonAction: () => { setMode("text"); setDialogOpen(true); },
+      docsAction: () => navigate('/dashboard/docs'),
     },
     {
       title: "Document Embedding Service",
@@ -31,7 +38,8 @@ export default function APIServices() {
       buttonText: "Upload & Embed",
       usageCount: "8.7K",
       supportedFormats: ["PDF", "TXT", "XLSX", "DOCX"],
-      buttonAction: () => handleTryNow("Document Embedding"),
+      buttonAction: () => { setMode("file"); setDialogOpen(true); },
+      docsAction: () => navigate('/dashboard/docs'),
     },
     {
       title: "Semantic Document Search",
@@ -41,7 +49,8 @@ export default function APIServices() {
       endpoint: "https://api.forge.dev/v1/search",
       buttonText: "Search Demo",
       usageCount: "22.1K",
-      buttonAction: () => handleTryNow("Semantic Search"),
+      buttonAction: () => { setMode("search"); setDialogOpen(true); },
+      docsAction: () => navigate('/dashboard/docs'),
     },
   ];
 
@@ -90,14 +99,19 @@ export default function APIServices() {
           to help you get started quickly with any of our API services.
         </p>
         <div className="flex gap-3">
-          <button className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary-hover transition-colors">
+          <button onClick={() => navigate('/dashboard/docs')} className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary-hover transition-colors">
             View Documentation
           </button>
+          {/** Download SDKs button commented as requested */}
+          {/**
           <button className="px-4 py-2 border border-border rounded-lg hover:bg-accent transition-colors">
             Download SDKs
           </button>
+          */}
         </div>
       </div>
+
+      <APITestDialog open={dialogOpen} onOpenChange={setDialogOpen} mode={mode} />
     </div>
   );
 }

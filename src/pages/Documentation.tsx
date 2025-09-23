@@ -1,53 +1,16 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BookOpen, Code, Download, ExternalLink } from "lucide-react";
 
+const CodeBlock = ({ code }: { code: string }) => (
+  <pre className="bg-muted p-4 rounded-lg overflow-x-auto text-sm">
+    <code>{code}</code>
+  </pre>
+);
+
 export default function Documentation() {
-  const codeExamples = [
-    {
-      title: "Text Embedding",
-      language: "Python",
-      code: `import requests
-
-headers = {
-    'Authorization': 'Bearer your_api_key',
-    'Content-Type': 'application/json'
-}
-
-data = {
-    'text': 'Your text to embed',
-    'model': 'text-embedding-ada-002'
-}
-
-response = requests.post(
-    'https://api.forge.dev/v1/text/embed',
-    headers=headers,
-    json=data
-)
-
-embeddings = response.json()['embeddings']`,
-    },
-    {
-      title: "Document Search",
-      language: "JavaScript",
-      code: `const response = await fetch('https://api.forge.dev/v1/search', {
-  method: 'POST',
-  headers: {
-    'Authorization': 'Bearer your_api_key',
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    query: 'semantic search query',
-    limit: 10,
-    threshold: 0.8
-  })
-});
-
-const results = await response.json();
-console.log(results.documents);`,
-    },
-  ];
 
   return (
     <div className="p-6 space-y-6">
@@ -101,28 +64,123 @@ console.log(results.documents);`,
       {/* Code Examples */}
       <div className="space-y-6">
         <h2 className="text-2xl font-semibold">Code Examples</h2>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {codeExamples.map((example, index) => (
-            <Card key={index}>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">{example.title}</CardTitle>
-                  <Badge variant="secondary">{example.language}</Badge>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <pre className="bg-muted p-4 rounded-lg overflow-x-auto text-sm">
-                  <code>{example.code}</code>
-                </pre>
-                <Button variant="outline" size="sm" className="mt-3">
-                  <ExternalLink className="h-4 w-4 mr-2" />
-                  View Full Example
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+
+        {/* Text Embedding (/upload/text) */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Text Embedding</CardTitle>
+            <CardDescription>POST http://localhost:8000/upload/text</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Tabs defaultValue="python" className="w-full">
+              <TabsList>
+                <TabsTrigger value="python">Python</TabsTrigger>
+                <TabsTrigger value="js">JavaScript</TabsTrigger>
+              </TabsList>
+              <TabsContent value="python">
+                <CodeBlock code={`import requests
+
+url = 'http://localhost:8000/upload/text'
+headers = {
+    'X-API-Key': 'your_api_key',
+    'Content-Type': 'application/json'
+}
+payload = {
+    'content': 'Your text to embed',
+    'metadata': {}
+}
+resp = requests.post(url, headers=headers, json=payload)
+print(resp.status_code, resp.json())`} />
+              </TabsContent>
+              <TabsContent value="js">
+                <CodeBlock code={`await fetch('http://localhost:8000/upload/text', {
+  method: 'POST',
+  headers: {
+    'X-API-Key': 'your_api_key',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({ content: 'Your text to embed', metadata: {} })
+});`} />
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
+
+        {/* Document Search (/query) */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Document Search</CardTitle>
+            <CardDescription>POST http://localhost:8000/query</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Tabs defaultValue="python" className="w-full">
+              <TabsList>
+                <TabsTrigger value="python">Python</TabsTrigger>
+                <TabsTrigger value="js">JavaScript</TabsTrigger>
+              </TabsList>
+              <TabsContent value="python">
+                <CodeBlock code={`import requests
+
+url = 'http://localhost:8000/query'
+headers = {
+    'X-API-Key': 'your_api_key',
+    'Content-Type': 'application/json'
+}
+payload = {
+    'query': 'about divyansh sinha tech stack',
+    'max_results': 5
+}
+resp = requests.post(url, headers=headers, json=payload)
+print(resp.status_code, resp.json())`} />
+              </TabsContent>
+              <TabsContent value="js">
+                <CodeBlock code={`await fetch('http://localhost:8000/query', {
+  method: 'POST',
+  headers: {
+    'X-API-Key': 'your_api_key',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({ query: 'about divyansh sinha tech stack', max_results: 5 })
+});`} />
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
+
+        {/* File Upload (/upload/file) */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Upload File</CardTitle>
+            <CardDescription>POST http://localhost:8000/upload/file</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Tabs defaultValue="python" className="w-full">
+              <TabsList>
+                <TabsTrigger value="python">Python</TabsTrigger>
+                <TabsTrigger value="js">JavaScript</TabsTrigger>
+              </TabsList>
+              <TabsContent value="python">
+                <CodeBlock code={`import requests
+
+url = 'http://localhost:8000/upload/file'
+headers = { 'X-API-Key': 'your_api_key' }
+files = { 'file': open('your_file.pdf', 'rb') }
+resp = requests.post(url, headers=headers, files=files)
+print(resp.status_code, resp.json())`} />
+              </TabsContent>
+              <TabsContent value="js">
+                <CodeBlock code={`const form = new FormData();
+form.append('file', yourFile); // from <input type="file" />
+
+await fetch('http://localhost:8000/upload/file', {
+  method: 'POST',
+  headers: { 'X-API-Key': 'your_api_key' },
+  body: form
+});`} />
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Authentication Guide */}
@@ -136,9 +194,10 @@ console.log(results.documents);`,
         <CardContent className="space-y-4">
           <div>
             <h4 className="font-medium mb-2">Authorization Header</h4>
-            <pre className="bg-muted p-3 rounded text-sm">
-              Authorization: Bearer your_api_key_here
-            </pre>
+            <div className="space-y-2">
+              <pre className="bg-muted p-3 rounded text-sm">X-API-Key: your_api_key_here</pre>
+              <div className="text-xs text-muted-foreground">Use X-API-Key for authenticated endpoints in this demo.</div>
+            </div>
           </div>
           
           <div>

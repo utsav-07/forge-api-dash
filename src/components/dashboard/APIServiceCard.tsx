@@ -17,6 +17,7 @@ interface APIServiceCardProps {
   usageCount?: string;
   supportedFormats?: string[];
   className?: string;
+  docsAction?: () => void;
 }
 
 export function APIServiceCard({
@@ -30,6 +31,7 @@ export function APIServiceCard({
   usageCount,
   supportedFormats,
   className,
+  docsAction,
 }: APIServiceCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const { toast } = useToast();
@@ -138,7 +140,7 @@ export function APIServiceCard({
           >
             {buttonText}
           </Button>
-          <Button variant="outline" size="sm" className="px-3">
+          <Button variant="outline" size="sm" className="px-3" onClick={docsAction}>
             <FileText className="h-4 w-4 mr-1" />
             Docs
             <ExternalLink className="h-3 w-3 ml-1" />
