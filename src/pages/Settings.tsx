@@ -7,7 +7,19 @@ import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { User, Bell, Shield, CreditCard, Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
+import { useApi } from "@/hooks/useApi";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 
@@ -32,6 +44,31 @@ export default function Settings() {
   });
 
   const { toast } = useToast();
+  const { callApi } = useApi();
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDeleteEmbeddings = async () => {
+    setIsDeleting(true);
+    try {
+      const response = await callApi('/clear', {
+        method: 'DELETE',
+        requiresAuth: true,
+      });
+
+      toast({
+        title: "Success",
+        description: response?.message || "Your embeddings have been cleared.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete embeddings.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   const handleSaveProfile = () => {
     toast({
@@ -251,14 +288,36 @@ export default function Settings() {
             <CardHeader>
               <CardTitle className="text-destructive">Danger Zone</CardTitle>
               <CardDescription>
-                Irreversible actions that will affect your account
+                Manage your indexed data. This action is irreversible.
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button variant="destructive" className="gap-2">
-                <Trash2 className="h-4 w-4" />
-                Delete Account
-              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="destructive" className="gap-2">
+                    <Trash2 className="h-4 w-4" />
+                    Delete All Embeddings
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete all of your indexed documents and embeddings from our servers.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleDeleteEmbeddings}
+                      disabled={isDeleting}
+                      className="bg-destructive hover:bg-destructive/90"
+                    >
+                      {isDeleting ? "Deleting..." : "Yes, delete everything"}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </CardContent>
           </Card>
         </div>
