@@ -69,7 +69,7 @@ export default function Documentation() {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">Text Embedding</CardTitle>
-            <CardDescription>POST http://localhost:8000/upload/text</CardDescription>
+            <CardDescription>POST http://18.212.82.121:8000/upload/text</CardDescription>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="python" className="w-full">
@@ -80,7 +80,7 @@ export default function Documentation() {
               <TabsContent value="python">
                 <CodeBlock code={`import requests
 
-url = 'http://localhost:8000/upload/text'
+url = 'http://18.212.82.121:8000/upload/text'
 headers = {
     'X-API-Key': 'your_api_key',
     'Content-Type': 'application/json'
@@ -93,7 +93,7 @@ resp = requests.post(url, headers=headers, json=payload)
 print(resp.status_code, resp.json())`} />
               </TabsContent>
               <TabsContent value="js">
-                <CodeBlock code={`await fetch('http://localhost:8000/upload/text', {
+                <CodeBlock code={`await fetch('http://18.212.82.121:8000/upload/text', {
   method: 'POST',
   headers: {
     'X-API-Key': 'your_api_key',
@@ -110,7 +110,7 @@ print(resp.status_code, resp.json())`} />
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">Document Search</CardTitle>
-            <CardDescription>POST http://localhost:8000/query</CardDescription>
+            <CardDescription>POST http://18.212.82.121:8000/query</CardDescription>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="python" className="w-full">
@@ -121,7 +121,7 @@ print(resp.status_code, resp.json())`} />
               <TabsContent value="python">
                 <CodeBlock code={`import requests
 
-url = 'http://localhost:8000/query'
+url = 'http://18.212.82.121:8000/query'
 headers = {
     'X-API-Key': 'your_api_key',
     'Content-Type': 'application/json'
@@ -134,7 +134,7 @@ resp = requests.post(url, headers=headers, json=payload)
 print(resp.status_code, resp.json())`} />
               </TabsContent>
               <TabsContent value="js">
-                <CodeBlock code={`await fetch('http://localhost:8000/query', {
+                <CodeBlock code={`await fetch('http://18.212.82.121:8000/query', {
   method: 'POST',
   headers: {
     'X-API-Key': 'your_api_key',
@@ -151,7 +151,7 @@ print(resp.status_code, resp.json())`} />
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">Upload File</CardTitle>
-            <CardDescription>POST http://localhost:8000/upload/file</CardDescription>
+            <CardDescription>POST http://18.212.82.121:8000/upload/file</CardDescription>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="python" className="w-full">
@@ -162,7 +162,7 @@ print(resp.status_code, resp.json())`} />
               <TabsContent value="python">
                 <CodeBlock code={`import requests
 
-url = 'http://localhost:8000/upload/file'
+url = 'http://18.212.82.121:8000/upload/file'
 headers = { 'X-API-Key': 'your_api_key' }
 files = { 'file': open('your_file.pdf', 'rb') }
 resp = requests.post(url, headers=headers, files=files)
@@ -172,7 +172,7 @@ print(resp.status_code, resp.json())`} />
                 <CodeBlock code={`const form = new FormData();
 form.append('file', yourFile); // from <input type="file" />
 
-await fetch('http://localhost:8000/upload/file', {
+await fetch('http://18.212.82.121:8000/upload/file', {
   method: 'POST',
   headers: { 'X-API-Key': 'your_api_key' },
   body: form

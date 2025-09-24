@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 
 // API base URL - matches the backend server
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'http://18.212.82.121:8000';
 
 interface ApiOptions extends RequestInit {
   requiresAuth?: boolean;

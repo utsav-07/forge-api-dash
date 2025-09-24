@@ -76,7 +76,7 @@ export function APITestDialog({ open, onOpenChange, mode }: APITestDialogProps) 
         if (!file) throw new Error("Please choose a file");
         const form = new FormData();
         form.append("file", file);
-        const res = await fetch(`http://localhost:8000/upload/file`, {
+        const res = await fetch(`http://18.212.82.121:8000/upload/file`, {
           method: "POST",
           headers: { "X-API-Key": apiKey }, // no JSON header for multipart
           body: form,
